@@ -9,7 +9,7 @@ services:
    db:
      image: mysql
      volumes:
-       - db_data:/Users/artpar/workspace/code/callup-dashboard/db_data
+       - /Users/artpar/workspace/code/callup-dashboard/db_data:/var/lib/mysql
      restart: always
      environment:
        MYSQL_ROOT_PASSWORD: somecallupdashboard
@@ -28,5 +28,3 @@ services:
        DAPTIN_DB_TYPE: mysql
        DAPTIN_DB_CONNECTION_STRING: callup:dbcalluppassword@tcp(db:3306)/callup
        DAPTIN_PORT: 8080
-volumes:
-    db_data:
