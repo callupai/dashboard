@@ -1,0 +1,32 @@
+version: '3.3'
+services:
+   nginx-proxy:
+     image: jwilder/nginx-proxy
+     ports:
+       - "8080:80"
+     volumes:
+       - /var/run/docker.sock:/tmp/docker.sock:ro
+   db:
+     image: mysql
+     volumes:
+       - db_data:/Users/artpar/workspace/code/callup-dashboard/db_data
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: somecallupdashboard
+       MYSQL_DATABASE: callup
+       MYSQL_USER: callup
+       MYSQL_PASSWORD: dbcalluppassword
+   wordpress:
+     depends_on:
+       - db
+     image: callup/dashboard:latest
+     ports:
+       - "8000:8080"
+     restart: always
+     environment:
+       VIRTUAL_HOST: whoami.local
+       DAPTIN_DB_TYPE: mysql
+       DAPTIN_DB_CONNECTION_STRING: callup:dbcalluppassword@tcp(db:3306)/callup
+       DAPTIN_PORT: 8080
+volumes:
+    db_data:

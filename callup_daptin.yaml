@@ -1,0 +1,83 @@
+Tables:
+  - TableName: ticket
+    Columns:
+      - Name: merchant_ticket_number
+        DataType: varchar(200)
+        ColumnType: label
+      - Name: support_ticket_number
+        DataType: varchar(200)
+        ColumnType: label
+      - Name: confidence
+        DataType: float(5,2)
+        ColumnType: measurement
+      - Name: description
+        DataType: text
+        ColumnType: content
+  - TableName: intent
+    Columns:
+      - Name: intent_name
+        DataType: varchar(200)
+        ColumnType: label
+  - TableName: merchant
+    Columns:
+      - Name: merchant_name
+        DataType: varchar(200)
+        ColumnType: label
+Relations:
+  - Subject: ticket
+    SubjectName: predicted_intent_of
+    Relation: has_one
+    Object: intent
+    ObjectName: predicted_intent
+  - Subject: ticket
+    SubjectName: corrected_intent_of
+    Relation: has_one
+    Object: intent
+    ObjectName: corrected_intent
+  - Subject: ticket
+    Relation: belongs_to
+    Object: merchant
+Actions:
+- Name: create_ticket
+  Label: Create Ticket
+  OnType: merchant
+  InstanceOptional: true
+  InFields:
+    - Name: merchant_ticket_number
+      ColumnName: merchant_ticket_number
+      ColumnType: label
+    - Name: support_ticket_number
+      ColumnName: merchant_ticket_number
+      ColumnType: label
+    - Name: confidence
+      ColumnName: confidence
+      ColumnType: measurement
+    - Name: description
+      ColumnName: description
+      ColumnType: content
+    - Name: merchant_name
+      ColumnName: merchant_name
+      ColumnType: label
+    - Name: predicted_intent
+      ColumnName: predicted_intent
+      ColumnType: label
+  OutFields:
+  - Method: GET
+    Type: merchant
+    Reference: merchant
+    Attributes:
+      query: ~merchant_name
+  - Method: GET
+    Type: intent
+    Reference: intent
+    Attributes:
+      query: ~predicted_intent
+  - Method: POST
+    Type: ticket
+    Attributes:
+      merchant_ticket_number: "~merchant_ticket_number"
+      support_ticket_number: "~support_ticket_number"
+      confidence: "~confidence"
+      description: "~description"
+      predicted_intent: "$intent[0].reference_id"
+      merchant_id: "$merchant[0].reference_id"
