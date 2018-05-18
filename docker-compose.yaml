@@ -9,7 +9,7 @@ services:
    db:
      image: mysql
      volumes:
-       - /Users/artpar/workspace/code/callup-dashboard/db_data:/var/lib/mysql
+       - ./db_data:/var/lib/mysql
      restart: always
      environment:
        MYSQL_ROOT_PASSWORD: somecallupdashboard
