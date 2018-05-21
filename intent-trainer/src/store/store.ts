@@ -56,13 +56,16 @@ daptinClient.worldManager.loadModels().then(function () {
       state.tickets = res.data;
     });
 
-    daptinClient.jsonApi.findAll("intent").then(function (res: any) {
+    daptinClient.jsonApi.findAll("intent", {
+      page: {
+        size: 500,
+        number: 1
+      }
+    }).then(function (res: any) {
       console.log("all intents", res.data);
       state.intents = res.data;
     });
   }
-
-
 });
 
 interface State {
