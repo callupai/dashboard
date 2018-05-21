@@ -9,7 +9,7 @@
 
       <div class="btn-matrix">
         <button v-for="intent in this.$store.state.intents" type="button" class="btn btn-outline-success" v-on:click='setValue(intent)'>
-          {{intent}}
+          {{intent.intent_name}}
         </button>
       </div>
 
@@ -30,18 +30,16 @@
 
   @Component({
     name: "LinkComponent",
-    props: {
-      description: String
-    }
   })
   export default class cLink extends Vue {
     ticketId: string = "";
     ticket: Ticket = {} as Ticket;
+
     mounted() {
       const that = this;
       this.ticketId = this.$route.params.ticket_id;
       console.log("loaded mark correct intent", this.ticketId, this.$store.state);
-      this.$store.state.client.jsonApi.find("ticket", this.ticketId).then(function(res: any){
+      this.$store.state.client.jsonApi.find("ticket", this.ticketId).then(function (res: any) {
         that.ticket = res.data;
         console.log("loaded ticket", res.data);
       })

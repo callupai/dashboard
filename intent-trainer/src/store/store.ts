@@ -22,6 +22,7 @@ export interface Ticket {
 }
 
 export interface Intent {
+  intent_name: String,
   confidence: String,
   permission: String,
   user_id: String,
@@ -35,6 +36,10 @@ daptinClient.worldManager.loadModels().then(function () {
   daptinClient.jsonApi.findAll("ticket").then(function (res: any) {
     console.log("all tickets", res.data);
     state.tickets = res.data;
+  })
+  daptinClient.jsonApi.findAll("intent").then(function (res: any) {
+    console.log("all intents", res.data);
+    state.intents = res.data;
   })
 });
 
@@ -50,8 +55,16 @@ const mutations: MutationTree<State> = {
   refreshTickets: (state) => {
     daptinClient.worldManager.loadModel("ticket").then(function (response) {
       daptinClient.jsonApi.findAll("ticket").then(function (tickets: Ticket[]) {
-        console.log("intents", tickets);
+        console.log("tickets", tickets);
         state.tickets = tickets;
+      });
+    })
+  },
+  refreshIntents: (state) => {
+    daptinClient.worldManager.loadModel("intent").then(function (response) {
+      daptinClient.jsonApi.findAll("intent").then(function (tickets: Ticket[]) {
+        console.log("intents", tickets);
+        state.intents = tickets;
       });
     })
   }
