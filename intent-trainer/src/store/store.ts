@@ -21,6 +21,15 @@ export interface Ticket {
   updated_at: Date,
 }
 
+export interface Intent {
+  confidence: String,
+  permission: String,
+  user_id: String,
+  reference_id: String,
+  created_at: Date,
+  updated_at: Date,
+}
+
 const daptinClient = new DaptinClient("http://ec2-54-169-121-6.ap-southeast-1.compute.amazonaws.com:5679", false);
 daptinClient.worldManager.loadModels().then(function () {
   daptinClient.jsonApi.findAll("ticket").then(function (res: any) {
@@ -31,7 +40,9 @@ daptinClient.worldManager.loadModels().then(function () {
 
 interface State {
   links: T.Link[],
-  tickets: Ticket[]
+  tickets: Ticket[],
+  intents: Intent[],
+  client: DaptinClient,
 }
 
 const mutations: MutationTree<State> = {
@@ -53,6 +64,8 @@ const state: State = {
     {url: "https://vuejs.org", description: "Core Docs"},
   ] as T.Link[],
   tickets: [] as Ticket[],
+  intents: [] as Intent[],
+  client: daptinClient
 };
 
 export default new Vuex.Store<State>({

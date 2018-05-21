@@ -39,6 +39,7 @@
 <script lang="ts">
   import Vue from "vue";
   import Component from "vue-class-component";
+  import {RawLocation} from "vue-router";
 
   @Component({
     // components: {cLink}
@@ -52,7 +53,12 @@
     }
 
     intentCorrectionPage(ticket: any) {
-      this.$router.push('mark_correct_intent/' + ticket.reference_id);
+      this.$router.push({
+        name: "MarkCorrectIntent",
+        params: {
+          ticket_id: ticket.reference_id
+        }
+      } as RawLocation);
       // location.href = 'intent-correction.html' + '?description=' + ticket.attributes.description;
     }
 

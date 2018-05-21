@@ -3,18 +3,20 @@
     <div style="text-align: center; padding-top: 30px;">
       What is the correct intent?
       <br/>
-      Case Description: {{caseDescription}}
+      Case Description: {{this.$route.params.ticket_id}}
     </div>
     <div class="centroid">
 
       <div class="btn-matrix">
-        <button v-for="intent in intents" type="button" class="btn btn-outline-success" v-on:click='setValue(intent)'>{{intent}}</button>
+        <button v-for="intent in this.$store.state.intents" type="button" class="btn btn-outline-success" v-on:click='setValue(intent)'>
+          {{intent}}
+        </button>
       </div>
 
     </div>
     <div class="centroid">
       <form class="form-inline">
-        <input type="text" id="intent_value" class="form-control" id="inputPassword2" placeholder="new_intent_name">
+        <input type="text" id="intent_value" class="form-control" placeholder="new_intent_name">
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>
@@ -24,21 +26,19 @@
 <script lang="ts">
   import Vue from "vue";
   import Component from "vue-class-component";
-  import * as T from "../types/common";
 
   @Component({
     name: "LinkComponent",
     props: {
-      url: String,
       description: String
     }
   })
   export default class cLink extends Vue {
-    link: T.Link = {url: "", description: "Link"};
-
+    ticketId: string = "";
     mounted() {
-      this.link.url = this.$props.url || this.link.url;
-      this.link.description = this.$props.description || this.link.description;
+      this.ticketId = this.$route.params.ticket_id;
+      console.log("loaded mark correct intent", this.ticketId);
+      this.$store.state.client.one()
     }
   }
 </script>
