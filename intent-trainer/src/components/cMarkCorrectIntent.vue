@@ -8,6 +8,7 @@
     <div class="centroid">
 
       <div class="btn-matrix">
+        {{ticket.predicted_intent}}
         <button v-for="intent in this.$store.state.intents" type="button" class="btn btn-outline-success" v-on:click='chooseIntent(intent)'>
           {{intent.intent_name}}
         </button>
@@ -74,7 +75,9 @@
       const that = this;
       this.ticketId = this.$route.params.ticket_id;
       console.log("loaded mark correct intent", this.ticketId, this.$store.state);
-      this.$store.state.client.jsonApi.find("ticket", this.ticketId).then(function (res: any) {
+      this.$store.state.client.jsonApi.find("ticket", this.ticketId, {
+        included_relations: "intent"
+      }).then(function (res: any) {
         that.ticket = res.data;
         console.log("loaded ticket", res.data);
       })

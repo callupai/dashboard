@@ -27,7 +27,7 @@
         <td>{{ticket.corrected_intent ? ticket.corrected_intent.intent_name : ""}}</td>
         <td>{{ticket.confidence}}%</td>
         <td>
-          <button type="button" class="btn btn-success" v-on:click='showSnackbar(ticket.merchant_ticket_number)'>Correct</button>
+          <button type="button" class="btn btn-success" v-on:click='markAsCorrect(ticket)'>Correct</button>
         </td>
       </tr>
       </tbody>
@@ -40,6 +40,7 @@
   import Vue from "vue";
   import Component from "vue-class-component";
   import {RawLocation} from "vue-router";
+  import {Ticket} from "../store/store";
 
   @Component({
     // components: {cLink}
@@ -52,13 +53,24 @@
       console.log("a non-vuex method has been called");
     }
 
-    intentCorrectionPage(ticket: any) {
+    intentCorrectionPage(ticket: Ticket) {
       this.$router.push({
         name: "MarkCorrectIntent",
         params: {
-          ticket_id: ticket.reference_id
+          ticket_id: ticket.reference_id as string
         }
       } as RawLocation);
+    }
+
+    markAsCorrect(ticket: Ticket) {
+      const that = this;
+      that.$store.state.client.jsonApi.update("ticket", {
+        id: ticket.reference_id,
+        corrected_intent: ticket.predicted_intent,
+      }).then(function (res: any) {
+        console.log("update ticket response", res);
+        that.$store.commit("refreshTickets");
+      });
     }
 
     showSnackbar(ticket_id: string) {

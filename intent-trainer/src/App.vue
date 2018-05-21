@@ -20,7 +20,7 @@
 
     <el-menu v-if="$store.state.user.token" class="el-menu-demo" mode="horizontal">
       <el-submenu index="2">
-        <template slot="title">User</template>
+        <template slot="title">User {{userProfile.email}}</template>
         <el-menu-item index="2-1" @click="logout">Logout</el-menu-item>
       </el-submenu>
     </el-menu>
@@ -37,6 +37,7 @@
   @Component
   export default class App extends Vue {
     dialogVisible: boolean = false;
+    userProfile: any = {};
     name: string = 'app';
     authForm: any = {
       username: "",
@@ -68,6 +69,10 @@
       console.log("mounted app", this.$store.state.user.token);
       if (!this.$store.state.user.token) {
         this.dialogVisible = true;
+      }
+      if (this.$store.state.user.token) {
+        let userProfile = JSON.parse(window.localStorage.getItem("user") as string)
+        this.userProfile = userProfile;
       }
     }
 
