@@ -15,10 +15,10 @@
 
     </div>
     <div class="centroid">
-      <form class="form-inline">
+      <div class="form-inline">
         <input type="text" :value="correctIntent.intent_name" id="intent_value" class="form-control" placeholder="new_intent_name">
         <button type="submit" class="btn btn-primary" @click="setIntent">Submit</button>
-      </form>
+      </div>
     </div>
   </div>
 </template>
