@@ -62,7 +62,7 @@ const mutations: MutationTree<State> = {
   },
   refreshIntents: (state) => {
     daptinClient.worldManager.loadModel("intent").then(function (response) {
-      daptinClient.jsonApi.findAll("intent").then(function (tickets: Ticket[]) {
+      daptinClient.jsonApi.findAll("intent").then(function (tickets: Intent[]) {
         console.log("intents", tickets);
         state.intents = tickets;
       });
