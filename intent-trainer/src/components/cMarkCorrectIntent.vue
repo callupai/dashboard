@@ -8,7 +8,7 @@
     <div class="centroid">
 
       <div class="btn-matrix">
-        <button v-for="intent in this.$store.state.intents" type="button" class="btn btn-outline-success" v-on:click='setValue(intent)'>
+        <button v-for="intent in this.$store.state.intents" type="button" class="btn btn-outline-success" v-on:click='chooseIntent(intent)'>
           {{intent.intent_name}}
         </button>
       </div>
@@ -16,8 +16,8 @@
     </div>
     <div class="centroid">
       <form class="form-inline">
-        <input type="text" id="intent_value" class="form-control" placeholder="new_intent_name">
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <input type="text" :value="correctIntent.intent_name" id="intent_value" class="form-control" placeholder="new_intent_name">
+        <button type="submit" class="btn btn-primary" @click="setIntent">Submit</button>
       </form>
     </div>
   </div>
@@ -26,7 +26,7 @@
 <script lang="ts">
   import Vue from "vue";
   import Component from "vue-class-component";
-  import {Ticket} from "../store/store";
+  import {Intent, Ticket} from "../store/store";
 
   @Component({
     name: "LinkComponent",
@@ -34,6 +34,15 @@
   export default class cLink extends Vue {
     ticketId: string = "";
     ticket: Ticket = {} as Ticket;
+    correctIntent: Intent = {} as Intent;
+
+    chooseIntent(intent: Intent) {
+      this.correctIntent = intent;
+    }
+
+    setIntent() {
+      console.log("update on server")
+    }
 
     mounted() {
       const that = this;
