@@ -33,13 +33,16 @@ export interface Intent {
 
 const daptinClient = new DaptinClient("http://ec2-54-169-121-6.ap-southeast-1.compute.amazonaws.com:5679", false);
 daptinClient.worldManager.loadModels().then(function () {
-  daptinClient.jsonApi.findAll("ticket").then(function (res: any) {
-    console.log("all tickets", res.data);
-    state.tickets = res.data;
-  })
+
   daptinClient.jsonApi.findAll("intent").then(function (res: any) {
     console.log("all intents", res.data);
     state.intents = res.data;
+    daptinClient.jsonApi.findAll("ticket", {
+      included_relations: "intent"
+    }).then(function (res: any) {
+      console.log("all tickets", res.data);
+      state.tickets = res.data;
+    })
   })
 });
 

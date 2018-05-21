@@ -23,8 +23,8 @@
         <td>{{ticket.merchant_ticket_number}}</td>
         <td>{{ticket.category}}</td>
         <td>{{ticket.description}}</td>
-        <td>{{ticket.predicted_intent}}</td>
-        <td>{{ticket.corrected_intent}}</td>
+        <td>{{ticket.predicted_intent ?  ticket.predicted_intent.intent_name : ""}}</td>
+        <td>{{ticket.corrected_intent ? ticket.corrected_intent.intent_name : ""}}</td>
         <td>{{ticket.confidence}}%</td>
         <td>
           <button type="button" class="btn btn-success" v-on:click='showSnackbar(ticket.merchant_ticket_number)'>Correct</button>

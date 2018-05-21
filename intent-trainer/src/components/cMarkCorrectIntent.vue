@@ -12,7 +12,6 @@
           {{intent.intent_name}}
         </button>
       </div>
-
     </div>
     <div class="centroid">
       <div class="form-inline">
