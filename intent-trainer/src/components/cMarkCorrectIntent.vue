@@ -3,7 +3,7 @@
     <div style="text-align: center; padding-top: 30px;">
       What is the correct intent?
       <br/>
-      Case Description: {{this.$route.params.ticket_id}}
+      <h4>{{this.ticket.description}}</h4>
     </div>
     <div class="centroid">
 
@@ -26,6 +26,7 @@
 <script lang="ts">
   import Vue from "vue";
   import Component from "vue-class-component";
+  import {Ticket} from "../store/store";
 
   @Component({
     name: "LinkComponent",
@@ -35,10 +36,15 @@
   })
   export default class cLink extends Vue {
     ticketId: string = "";
+    ticket: Ticket = {} as Ticket;
     mounted() {
+      const that = this;
       this.ticketId = this.$route.params.ticket_id;
-      console.log("loaded mark correct intent", this.ticketId);
-      this.$store.state.client.one()
+      console.log("loaded mark correct intent", this.ticketId, this.$store.state);
+      this.$store.state.client.jsonApi.find("ticket", this.ticketId).then(function(res: any){
+        that.ticket = res.data;
+        console.log("loaded ticket", res.data);
+      })
     }
   }
 </script>
