@@ -59,7 +59,6 @@
           ticket_id: ticket.reference_id
         }
       } as RawLocation);
-      // location.href = 'intent-correction.html' + '?description=' + ticket.attributes.description;
     }
 
     showSnackbar(ticket_id: string) {

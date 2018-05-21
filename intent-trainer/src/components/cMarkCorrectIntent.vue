@@ -40,7 +40,13 @@
     }
 
     setIntent() {
-      console.log("update on server")
+      console.log("update on server");
+      this.$store.state.client.jsonApi.update("ticket", {
+        id: this.$route.params.ticket_id,
+        corrected_intent: this.correctIntent,
+      }).then(function(res: any){
+        console.log("update ticket response", res);
+      })
     }
 
     mounted() {
