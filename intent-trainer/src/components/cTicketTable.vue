@@ -1,13 +1,17 @@
 <template>
   <div class="container">
-    <!--<h2>Hoverable Dark Table</h2>-->
-    <!--<p>The .table-hover class adds a hover effect (grey background color) on table rows:</p>-->
+    <div>
+      Page: {{this.$store.state.ticketPagination.number}}
+      <el-button @click="previousPage">Previous page</el-button>
+      <el-button @click="firstPage">First page</el-button>
+      <el-button @click="nextPage">Next page</el-button>
+    </div>
     <table class="table table-hover">
       <thead>
       <tr>
         <th></th>
         <th>Ticket Id</th>
-        <!--<th>Category</th>-->
+        <th>Subject</th>
         <th>Description</th>
         <th>Predict Intent</th>
         <th>Correct Intent</th>
@@ -21,7 +25,7 @@
           <button type="button" class="btn btn-danger" v-on:click='intentCorrectionPage(ticket)'>Wrong</button>
         </td>
         <td>{{ticket.merchant_ticket_number}}</td>
-        <!--<td>{{ticket.category}}</td>-->
+        <td>{{ticket.subject}}</td>
         <td>{{ticket.description}}</td>
         <td>{{ticket.predicted_intent ? ticket.predicted_intent.intent_name : ""}}</td>
         <td>{{ticket.corrected_intent ? ticket.corrected_intent.intent_name : ""}}</td>
@@ -48,6 +52,34 @@
   export default class cHello extends Vue {
     snackbar_tkt: string = "";
 
+
+    firstPage() {
+      this.$store.commit("setPage", {
+        number: 1,
+        size: 20
+      })
+      this.$store.commit("refreshTickets");
+    }
+
+
+    nextPage() {
+      this.$store.commit("setPage", {
+        number: this.$store.state.ticketPagination.number + 1,
+        size: 20
+      })
+      this.$store.commit("refreshTickets");
+    }
+
+    previousPage() {
+      if (this.$store.state.ticketPagination.number < 2) {
+        return
+      }
+      this.$store.commit("setPage", {
+        number: this.$store.state.ticketPagination.number - 1,
+        size: 20
+      })
+      this.$store.commit("refreshTickets");
+    }
 
     onClick(): void {
       console.log("a non-vuex method has been called");

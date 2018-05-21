@@ -104,6 +104,10 @@ const mutations: MutationTree<State> = {
         });
       })
     }
+  },
+  setPage: (state, page) => {
+    console.log("new pagge", page)
+    state.ticketPagination = page;
   }
 };
 
@@ -120,7 +124,7 @@ const state: State = {
     token: token
   } as UserAccount,
   ticketPagination: {
-    size: 100,
+    size: 20,
     number: 1
   } as Pagination
 };
