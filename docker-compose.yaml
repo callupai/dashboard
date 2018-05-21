@@ -7,7 +7,7 @@ services:
      volumes:
        - /var/run/docker.sock:/tmp/docker.sock:ro
    db:
-     image: mysql
+     image: mysql:5.7
      volumes:
        - ./db_data:/var/lib/mysql
      restart: always
