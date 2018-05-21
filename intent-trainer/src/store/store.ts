@@ -37,17 +37,15 @@ export interface UserAccount {
   token: String,
 }
 
-let localUser: any = window.localStorage.getItem("user");
-if (!localUser) {
-  localUser = {};
-} else {
-  localUser = JSON.parse(localUser)
+let token: any = window.localStorage.getItem("token");
+if (!token) {
+  token = null;
 }
 
 const daptinClient = new DaptinClient("http://ec2-54-169-121-6.ap-southeast-1.compute.amazonaws.com:5679", false);
 daptinClient.worldManager.loadModels().then(function () {
 
-  if (localUser.token) {
+  if (token) {
     daptinClient.jsonApi.findAll("ticket", {
       included_relations: "intent"
     }).then(function (res: any) {
@@ -105,7 +103,9 @@ const state: State = {
   tickets: [] as Ticket[],
   intents: [] as Intent[],
   client: daptinClient,
-  user: localUser
+  user: {
+    token: token
+  } as UserAccount
 };
 
 export default new Vuex.Store<State>({
