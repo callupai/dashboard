@@ -1,22 +1,27 @@
 <template>
   <div id="app">
-    <el-button type="text" @click="showLogin">click to open the Dialog</el-button>
-
     <el-dialog
-      title="Tips"
+      title="Call-Up Trainer Login"
       :visible.sync="dialogVisible"
-      width="30%"
-      :before-close="handleClose">
-      <span>This is a message</span>
+      width="30%" :close-on-press-escape="false" :show-close="false" :close-on-click-modal="false">
+      <el-form :model="authForm" class="auth-form">
+        <el-form-item label="Username">
+          <el-input v-model="authForm.username" placeholder="Email"></el-input>
+        </el-form-item>
+        <el-form-item label="Password">
+          <el-input type="password" v-model="authForm.password">
+          </el-input>
+        </el-form-item>
+      </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">Cancel</el-button>
-    <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+    <el-button type="primary" @click="tryLogin()">Login</el-button>
   </span>
     </el-dialog>
 
-    <router-view/>
+    <router-view v-if="$store.state.user.token"/>
   </div>
 </template>
+
 
 <script lang="ts">
   import Vue from 'vue'
@@ -26,20 +31,34 @@
   export default class App extends Vue {
     dialogVisible: boolean = false;
     name: string = 'app';
+    authForm: any = {
+      username: "",
+      password: ""
+    };
+
+    tryLogin() {
+      console.log("login", this.authForm);
+      this.$store.state.client.actionManager.doAction("user", "signin", {
+        email: this.authForm.username,
+        password: this.authForm.password,
+      }).then(function (authResponse: any) {
+        console.log("sign in action response", authResponse)
+      })
+    }
 
     showLogin() {
       console.log("show login dialog");
       this.dialogVisible = true;
     }
 
-    handleClose(done: any) {
-      this.$confirm('Are you sure to close this dialog?')
-        .then((_: any) => {
-          done();
-        })
-        .catch((_: any) => {
-        });
+    mounted() {
+      console.log("mounted app", this.$store.state.user.token);
+      if (!this.$store.state.user.token) {
+        this.dialogVisible = true;
+      }
     }
+
+
   }
 </script>
 
