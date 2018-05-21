@@ -13,6 +13,9 @@ Tables:
       - Name: description
         DataType: text
         ColumnType: content
+      - Name: description
+        DataType: varchar(500)
+        ColumnType: label
   - TableName: intent
     Columns:
       - Name: intent_name
