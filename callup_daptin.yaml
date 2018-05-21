@@ -47,7 +47,7 @@ Actions:
       ColumnName: merchant_ticket_number
       ColumnType: label
     - Name: support_ticket_number
-      ColumnName: merchant_ticket_number
+      ColumnName: support_ticket_number
       ColumnType: label
     - Name: confidence
       ColumnName: confidence
