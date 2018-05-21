@@ -7,7 +7,7 @@
       <tr>
         <th></th>
         <th>Ticket Id</th>
-        <th>Category</th>
+        <!--<th>Category</th>-->
         <th>Description</th>
         <th>Predict Intent</th>
         <th>Correct Intent</th>
@@ -16,14 +16,14 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="ticket in this.$store.state.tickets">
+      <tr v-for="ticket in this.$store.state.tickets" v-if="ticket">
         <td>
           <button type="button" class="btn btn-danger" v-on:click='intentCorrectionPage(ticket)'>Wrong</button>
         </td>
         <td>{{ticket.merchant_ticket_number}}</td>
-        <td>{{ticket.category}}</td>
+        <!--<td>{{ticket.category}}</td>-->
         <td>{{ticket.description}}</td>
-        <td>{{ticket.predicted_intent ?  ticket.predicted_intent.intent_name : ""}}</td>
+        <td>{{ticket.predicted_intent ? ticket.predicted_intent.intent_name : ""}}</td>
         <td>{{ticket.corrected_intent ? ticket.corrected_intent.intent_name : ""}}</td>
         <td>{{ticket.confidence}}%</td>
         <td>

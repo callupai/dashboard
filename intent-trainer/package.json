@@ -14,7 +14,7 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
-    "daptin-client": "^0.1.6",
+    "daptin-client": "^0.1.8",
     "element-ui": "^2.3.9",
     "jwt-decode": "^2.2.0",
     "vue": "^2.5.13",

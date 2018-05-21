@@ -37,17 +37,20 @@ export interface UserAccount {
   token: String,
 }
 
-let token: any = window.localStorage.getItem("token");
-if (!token) {
-  token = null;
+export interface Pagination {
+  number: number,
+  size: number
 }
 
-const daptinClient = new DaptinClient("http://ec2-54-169-121-6.ap-southeast-1.compute.amazonaws.com:5679", false);
+let token: any = window.localStorage.getItem("token");
+
+const daptinClient = new DaptinClient("http://localhost:8000", false);
 daptinClient.worldManager.loadModels().then(function () {
 
   if (token) {
     daptinClient.jsonApi.findAll("ticket", {
-      included_relations: "intent"
+      included_relations: "intent",
+      page: state.ticketPagination
     }).then(function (res: any) {
       console.log("all tickets", res.data);
       state.tickets = res.data;
@@ -68,18 +71,25 @@ interface State {
   intents: Intent[],
   client: DaptinClient,
   user: UserAccount,
+  ticketPagination: Pagination,
 }
 
 const mutations: MutationTree<State> = {
   reverse: (state) => state.links.reverse(),
+  logout: (state) => {
+    state.user = {} as UserAccount;
+  },
   refreshTickets: (state) => {
     if (state.user.token) {
-      daptinClient.worldManager.loadModel("ticket").then(function (response) {
-        daptinClient.jsonApi.findAll("ticket").then(function (tickets: Ticket[]) {
-          console.log("tickets", tickets);
-          state.tickets = tickets;
-        });
-      })
+
+      daptinClient.jsonApi.findAll("ticket", {
+        included_relations: "intent",
+        page: state.ticketPagination
+      }).then(function (res: any) {
+        console.log("all tickets", res.data);
+        state.tickets = res.data;
+      });
+
     }
   },
   refreshIntents: (state) => {
@@ -105,7 +115,11 @@ const state: State = {
   client: daptinClient,
   user: {
     token: token
-  } as UserAccount
+  } as UserAccount,
+  ticketPagination: {
+    size: 100,
+    number: 1
+  } as Pagination
 };
 
 export default new Vuex.Store<State>({

@@ -14,9 +14,16 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="tryLogin()">Login</el-button>
+    <el-button type="primary" @click="tryLogin">Login</el-button>
   </span>
     </el-dialog>
+
+    <el-menu v-if="$store.state.user.token" class="el-menu-demo" mode="horizontal">
+      <el-submenu index="2">
+        <template slot="title">User</template>
+        <el-menu-item index="2-1" @click="logout">Logout</el-menu-item>
+      </el-submenu>
+    </el-menu>
 
     <router-view v-if="$store.state.user.token"/>
   </div>
@@ -46,6 +53,12 @@
       })
     }
 
+    logout() {
+      window.localStorage.clear();
+      this.$store.commit("logout");
+      this.dialogVisible = true;
+    }
+
     showLogin() {
       console.log("show login dialog");
       this.dialogVisible = true;
@@ -71,6 +84,5 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
   }
 </style>

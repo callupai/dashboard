@@ -13,11 +13,18 @@
         </button>
       </div>
     </div>
+
     <div class="centroid">
-      <div class="form-inline">
-        <input type="text" :value="correctIntent.intent_name" id="intent_value" class="form-control" placeholder="new_intent_name">
-        <button type="submit" class="btn btn-primary" @click="setIntent">Submit</button>
-      </div>
+      <el-form>
+        <el-form-item>
+          <el-input type="text" :value="correctIntent.intent_name" id="intent_value" class="form-control" placeholder="correct intent">
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="setIntent">Update</el-button>
+          <el-button type="danger" @click="cancelUpdate">Cancel</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -26,6 +33,7 @@
   import Vue from "vue";
   import Component from "vue-class-component";
   import {Intent, Ticket} from "../store/store";
+  import {RawLocation} from "vue-router";
 
   @Component({
     name: "LinkComponent",
@@ -39,14 +47,27 @@
       this.correctIntent = intent;
     }
 
+    cancelUpdate() {
+      this.$router.push({
+        name: 'TicketTable',
+      } as RawLocation);
+    }
+
     setIntent() {
+      const that = this;
       console.log("update on server");
-      this.$store.state.client.jsonApi.update("ticket", {
-        id: this.$route.params.ticket_id,
-        corrected_intent: this.correctIntent,
-      }).then(function(res: any){
+      that.$store.state.client.jsonApi.update("ticket", {
+        id: that.$route.params.ticket_id,
+        corrected_intent: that.correctIntent,
+      }).then(function (res: any) {
         console.log("update ticket response", res);
-      })
+        that.$store.commit("refreshTickets");
+        that.$router.push({
+          name: 'TicketTable',
+        } as RawLocation);
+      });
+      console.log("update server");
+
     }
 
     mounted() {
@@ -65,5 +86,9 @@
 <style scoped>
   a {
     color: #42b983;
+  }
+
+  .el-select .el-input {
+    width: 110px;
   }
 </style>
