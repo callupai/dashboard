@@ -14,7 +14,6 @@
         </button>
       </div>
     </div>
-{{correctIntentName}}
     <div class="centroid">
       <el-form>
         <el-form-item>
@@ -58,6 +57,8 @@
 
     alterIntent(intent: Intent){
       const that = this;
+      console.log("choosen Intent object");
+      console.log(intent);
       that.correctIntent = intent;
       console.log("todo intent patch call with correctIntent");
       console.log("update on server");
@@ -74,6 +75,7 @@
     }
 
     setIntent() {
+
       const that = this;
       for(let intent of that.$store.state.intents){
         console.log("intents:"+intent.intent_name+"\n");
