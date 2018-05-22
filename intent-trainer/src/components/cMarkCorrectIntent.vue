@@ -14,11 +14,11 @@
         </button>
       </div>
     </div>
-
+{{correctIntentName}}
     <div class="centroid">
       <el-form>
         <el-form-item>
-          <el-input type="text" :value="correctIntent.intent_name" id="intent_value" class="form-control" placeholder="correct intent">
+          <el-input type="text" v-model:value="correctIntentName" id="intent_value" class="form-control" placeholder="correct intent">
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -43,9 +43,11 @@
     ticketId: string = "";
     ticket: Ticket = {} as Ticket;
     correctIntent: Intent = {} as Intent;
+    correctIntentName: String = "";
 
     chooseIntent(intent: Intent) {
-      this.correctIntent = intent;
+//      this.correctIntent = intent;
+      this.correctIntentName = intent.intent_name
     }
 
     cancelUpdate() {
@@ -54,8 +56,10 @@
       } as RawLocation);
     }
 
-    setIntent() {
+    alterIntent(intent: Intent){
       const that = this;
+      that.correctIntent = intent;
+      console.log("todo intent patch call with correctIntent");
       console.log("update on server");
       that.$store.state.client.jsonApi.update("ticket", {
         id: that.$route.params.ticket_id,
@@ -64,12 +68,30 @@
         console.log("update ticket response", res);
         that.$store.commit("refreshTickets");
         that.$router.push({
-          name: 'TicketTable',
-        } as RawLocation);
+            name: 'TicketTable',
+          } as RawLocation);
       });
-      console.log("update server");
+    }
+
+    setIntent() {
+      const that = this;
+      for(let intent of that.$store.state.intents){
+        console.log("intents:"+intent.intent_name+"\n");
+        if(this.correctIntentName == intent.intent_name){
+          that.alterIntent(intent);
+          return
+        }
+      }
+      console.log("this looks like a new intent to me :)");
+      that.$store.state.client.jsonApi.create("intent", {"intent_name":that.correctIntentName}
+      ).then(function (res: any) {
+        console.log("new intent creation response", res)
+        that.alterIntent(res.data);
+
+      });
 
     }
+
 
     mounted() {
       const that = this;
