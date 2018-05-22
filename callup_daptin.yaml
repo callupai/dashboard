@@ -49,6 +49,9 @@ Actions:
     - Name: merchant_ticket_number
       ColumnName: merchant_ticket_number
       ColumnType: label
+    - Name: subject
+      ColumnName: subject
+      ColumnType: label
     - Name: support_ticket_number
       ColumnName: support_ticket_number
       ColumnType: label
@@ -82,5 +85,6 @@ Actions:
       support_ticket_number: "~support_ticket_number"
       confidence: "~confidence"
       description: "~description"
+      subject: "~subject"
       predicted_intent: "$intent[0].reference_id"
       merchant_id: "$merchant[0].reference_id"
