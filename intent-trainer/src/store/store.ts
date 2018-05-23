@@ -44,7 +44,7 @@ export interface Pagination {
 
 let token: any = window.localStorage.getItem("token");
 
-const daptinClient = new DaptinClient("intent-trainer.callup.ai:8080", false);
+const daptinClient = new DaptinClient("http://dashboard.callup.ai:8080", false);
 daptinClient.worldManager.loadModels().then(function () {
 
   if (token) {
