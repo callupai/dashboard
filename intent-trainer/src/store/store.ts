@@ -44,7 +44,7 @@ export interface Pagination {
 
 let token: any = window.localStorage.getItem("token");
 
-const daptinClient = new DaptinClient("http://dashboard.callup.ai:8080", false);
+const daptinClient = new DaptinClient("intent-trainer.callup.ai:8080", false);
 daptinClient.worldManager.loadModels().then(function () {
 
   if (token) {
@@ -97,12 +97,14 @@ const mutations: MutationTree<State> = {
   },
   refreshIntents: (state) => {
     if (state.user.token) {
-      daptinClient.worldManager.loadModel("intent").then(function (response) {
-        daptinClient.jsonApi.findAll("intent").then(function (tickets: Intent[]) {
-          console.log("intents", tickets);
-          state.intents = tickets;
-        });
-      })
+      daptinClient.jsonApi.findAll("intent",{
+        page: {
+          size: 500,
+          number: 1}
+        }).then(function (res: any) {
+        console.log("all intents", res.data);
+        state.intents = res.data;
+      });
     }
   },
   setPage: (state, page) => {

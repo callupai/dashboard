@@ -3,12 +3,10 @@
     <div style="text-align: center; padding-top: 30px;">
       What is the correct intent?
       <br/>
-      <h4>{{this.ticket.description}}</h4>
+      <h4>{{ticket.description}}</h4>
     </div>
     <div class="centroid">
-
       <div class="btn-matrix">
-        {{ticket.predicted_intent}}
         <button v-for="intent in this.$store.state.intents" type="button" class="btn btn-outline-success" v-on:click='chooseIntent(intent)'>
           {{intent.intent_name}}
         </button>
@@ -75,7 +73,6 @@
     }
 
     setIntent() {
-
       const that = this;
       for(let intent of that.$store.state.intents){
         console.log("intents:"+intent.intent_name+"\n");
@@ -87,8 +84,9 @@
       console.log("this looks like a new intent to me :)");
       that.$store.state.client.jsonApi.create("intent", {"intent_name":that.correctIntentName}
       ).then(function (res: any) {
-        console.log("new intent creation response", res)
+        console.log("new intent creation response", res);
         that.alterIntent(res.data);
+        that.$store.commit("refreshIntents");
 
       });
 
@@ -102,6 +100,7 @@
       this.$store.state.client.jsonApi.find("ticket", this.ticketId, {
         included_relations: "intent"
       }).then(function (res: any) {
+        console.log(res.data);
         that.ticket = res.data;
         console.log("loaded ticket", res.data);
       })
