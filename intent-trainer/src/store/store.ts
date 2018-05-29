@@ -44,7 +44,7 @@ export interface Pagination {
 
 let token: any = window.localStorage.getItem("token");
 
-const daptinClient = new DaptinClient("http://dashboard.callup.ai:8080", false);
+const daptinClient = new DaptinClient("http://intent-trainer.callup.ai:8080", false);
 daptinClient.worldManager.loadModels().then(function () {
 
   if (token) {
@@ -87,7 +87,8 @@ const mutations: MutationTree<State> = {
 
       daptinClient.jsonApi.findAll("ticket", {
         included_relations: "intent",
-        page: state.ticketPagination
+        page: state.ticketPagination,
+        sort:"-created_at"
       }).then(function (res: any) {
         console.log("all tickets", res.data);
         state.tickets = res.data;
