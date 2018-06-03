@@ -11,6 +11,7 @@
       <tr>
         <th></th>
         <th>Ticket Id</th>
+        <th>Created at</th>
         <th>Subject</th>
         <th>Description</th>
         <th>Predict Intent</th>
@@ -25,6 +26,7 @@
           <button type="button" class="btn btn-danger" v-on:click='intentCorrectionPage(ticket)'>Wrong</button>
         </td>
         <td>{{ticket.merchant_ticket_number}}</td>
+        <td>{{ticket.created_at}}</td>
         <td>{{ticket.subject}}</td>
         <td>{{ticket.description}}</td>
         <td>{{ticket.predicted_intent ? ticket.predicted_intent.intent_name : ""}}</td>
@@ -115,6 +117,10 @@
       setTimeout(function () {
         x.className = x.className.replace("show", "");
       }, 3000);
+    }
+
+    mounted(){
+      this.$store.commit("refreshTickets");
     }
   }
 </script>
