@@ -50,7 +50,8 @@ daptinClient.worldManager.loadModels().then(function () {
   if (token) {
     daptinClient.jsonApi.findAll("ticket", {
       included_relations: "intent",
-      page: state.ticketPagination
+      page: state.ticketPagination,
+      sort:"-created_at"
     }).then(function (res: any) {
       console.log("all tickets", res.data);
       state.tickets = res.data;

@@ -118,10 +118,7 @@
         x.className = x.className.replace("show", "");
       }, 3000);
     }
-
-    mounted(){
-      this.$store.commit("refreshTickets");
-    }
+    
   }
 </script>
 
