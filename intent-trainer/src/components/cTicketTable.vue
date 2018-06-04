@@ -26,7 +26,7 @@
           <button type="button" class="btn btn-danger" v-on:click='intentCorrectionPage(ticket)'>Wrong</button>
         </td>
         <td>{{ticket.merchant_ticket_number}}</td>
-        <td>{{ticket.created_at}}</td>
+        <td>{{formatDateAsIst(ticket.created_at)}}</td>
         <td>{{ticket.subject}}</td>
         <td>{{ticket.description}}</td>
         <td>{{ticket.predicted_intent ? ticket.predicted_intent.intent_name : ""}}</td>
@@ -96,6 +96,13 @@
       } as RawLocation);
     }
 
+    formatDateAsIst(createdAt: string){
+      let indianDate = new Date(new Date(createdAt).getTime() + 330*60000);
+      let finalTimeString = indianDate.toDateString()+"\n"+indianDate.toTimeString().split(" ")[0];
+
+      return finalTimeString;
+    }
+
     markAsCorrect(ticket: Ticket) {
       const that = this;
       that.$store.state.client.jsonApi.update("ticket", {
@@ -118,7 +125,7 @@
         x.className = x.className.replace("show", "");
       }, 3000);
     }
-    
+
   }
 </script>
 
