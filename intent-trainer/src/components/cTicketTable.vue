@@ -1,45 +1,92 @@
 <template>
-  <div class="container">
-    <div>
-      Page: {{this.$store.state.ticketPagination.number}}
-      <el-button @click="previousPage">Previous page</el-button>
-      <el-button @click="firstPage">First page</el-button>
-      <el-button @click="nextPage">Next page</el-button>
-    </div>
-    <table class="table table-hover">
-      <thead>
-      <tr>
-        <th></th>
-        <th>Ticket Id</th>
-        <th>Created at</th>
-        <th>Subject</th>
-        <th>Description</th>
-        <th>Predict Intent</th>
-        <th>Correct Intent</th>
-        <th>Confidence</th>
-        <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="ticket in this.$store.state.tickets" v-if="ticket">
-        <td>
-          <button type="button" class="btn btn-danger" v-on:click='intentCorrectionPage(ticket)'>Wrong</button>
-        </td>
-        <td>{{ticket.merchant_ticket_number}}</td>
-        <td>{{formatDateAsIst(ticket.created_at)}}</td>
-        <td>{{ticket.subject}}</td>
-        <td>{{ticket.description}}</td>
-        <td>{{ticket.predicted_intent ? ticket.predicted_intent.intent_name : ""}}</td>
-        <td>{{ticket.corrected_intent ? ticket.corrected_intent.intent_name : ""}}</td>
-        <td>{{ticket.confidence}}%</td>
-        <td>
-          <button type="button" class="btn btn-success" v-on:click='markAsCorrect(ticket)'>Correct</button>
-        </td>
-      </tr>
-      </tbody>
-    </table>
 
-  </div>
+  <el-container>
+    <el-header>
+      <el-row>
+        <el-col :span="12">
+          <el-input style="width: 400px" placeholder="Search by description/subject/ticket number"></el-input>
+        </el-col>
+        <el-col :span="12">
+          <el-button @click="previousPage">Previous</el-button>
+          <el-button @click="firstPage">First</el-button>
+          <el-button @click="refreshPage">Refresh</el-button>
+          <el-button @click="lastPage">Last</el-button>
+          <el-button @click="nextPage">Next</el-button>
+        </el-col>
+      </el-row>
+    </el-header>
+    <el-main>
+      <el-row>
+        <el-col :span="24">
+          <el-table :data="this.$store.state.tickets">
+
+            <el-table-column
+              fixed
+              width="400"
+              prop="description"
+              label="Description">
+            </el-table-column>
+
+            <el-table-column
+              prop="subject"
+              label="Subject"
+              width="250">
+            </el-table-column>
+
+
+            <el-table-column width="250"
+                             prop="predicted_intent.intent_name"
+                             label="Predicted intent">
+            </el-table-column>
+
+            <el-table-column width="180"
+                             prop="corrected_intent.intent_name"
+                             label="Corrected intent">
+            </el-table-column>
+
+
+            <el-table-column
+              prop="confidence"
+              label="Confidence"
+              width="100">
+            </el-table-column>
+
+            <el-table-column
+              prop="created_at"
+              label="Date"
+              :formatter="formatDateAsIst"
+              width="200">
+            </el-table-column>
+
+            <el-table-column
+              fixed="right"
+              label="Operations"
+              width="180">
+              <template slot-scope="scope">
+                <el-button
+                  size="mini"
+                  type="success"
+                  @click="markAsCorrect(scope.row)">Correct
+                </el-button>
+                <el-button
+                  size="mini"
+                  type="danger"
+                  @click="intentCorrectionPage(scope.row)">Wrong
+                </el-button>
+
+              </template>
+            </el-table-column>
+
+          </el-table>
+        </el-col>
+      </el-row>
+    </el-main>
+
+
+
+  </el-container>
+
+
 </template>
 
 <script lang="ts">
@@ -54,21 +101,36 @@
   export default class cHello extends Vue {
     snackbar_tkt: string = "";
 
-
     firstPage() {
       this.$store.commit("setPage", {
         number: 1,
-        size: 20
-      })
+        size: this.$store.state.ticketPagination.size
+      });
       this.$store.commit("refreshTickets");
+    }
+
+    refreshPage() {
+      this.$store.commit("refreshTickets");
+    }
+
+    filterPredictedHandler() {
+      console.log("filter predicted handler", arguments);
     }
 
 
     nextPage() {
       this.$store.commit("setPage", {
         number: this.$store.state.ticketPagination.number + 1,
-        size: 20
-      })
+        size: this.$store.state.ticketPagination.size
+      });
+      this.$store.commit("refreshTickets");
+    }
+
+    lastPage() {
+      this.$store.commit("setPage", {
+        number: this.$store.state.ticketPagination.lastPage,
+        size: this.$store.state.ticketPagination.size
+      });
       this.$store.commit("refreshTickets");
     }
 
@@ -78,8 +140,8 @@
       }
       this.$store.commit("setPage", {
         number: this.$store.state.ticketPagination.number - 1,
-        size: 20
-      })
+        size: this.$store.state.ticketPagination.size
+      });
       this.$store.commit("refreshTickets");
     }
 
@@ -96,14 +158,15 @@
       } as RawLocation);
     }
 
-    formatDateAsIst(createdAt: string){
-      let indianDate = new Date(new Date(createdAt).getTime() + 330*60000);
-      let finalTimeString = indianDate.toDateString()+"\n"+indianDate.toTimeString().split(" ")[0];
+    formatDateAsIst(row: any, column: any, createdAt: string, index: any) {
+      let indianDate = new Date(new Date(createdAt).getTime() + 330 * 60000);
+      let finalTimeString = indianDate.toDateString() + "\n" + indianDate.toTimeString().split(" ")[0];
 
       return finalTimeString;
     }
 
     markAsCorrect(ticket: Ticket) {
+      console.log("mark as correct", arguments);
       const that = this;
       that.$store.state.client.jsonApi.update("ticket", {
         id: ticket.reference_id,

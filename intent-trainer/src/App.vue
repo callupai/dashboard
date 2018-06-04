@@ -14,18 +14,50 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="tryLogin">Login</el-button>
-  </span>
+        <el-button type="primary" @click="tryLogin">Login</el-button>
+      </span>
     </el-dialog>
 
-    <el-menu v-if="$store.state.user.token" class="el-menu-demo" mode="horizontal">
-      <el-submenu index="2">
-        <template slot="title">User {{userProfile.email}}</template>
-        <el-menu-item index="2-1" @click="logout">Logout</el-menu-item>
-      </el-submenu>
-    </el-menu>
+    <el-header>
+      <el-menu v-if="$store.state.user.token"
+               mode="horizontal"
+               background-color="#fff"
+               text-color="#000"
+               active-text-color="#ffd04b">
+        <el-menu-item index="1" disabled>Call up</el-menu-item>
+        <el-submenu index="2">
+          <template slot="title">User {{userProfile.email}}</template>
+          <el-menu-item index="2-1" @click="logout">Logout</el-menu-item>
+        </el-submenu>
+        <el-menu-item index="3">
 
-    <router-view v-if="$store.state.user.token"/>
+        </el-menu-item>
+      </el-menu>
+
+    </el-header>
+
+    <el-container style="height: 91vh">
+
+      <el-aside width="200px">
+        <el-menu>
+          <a href="#/">
+            <el-menu-item index="1-1">
+              Tickets List
+            </el-menu-item>
+          </a>
+          <a href="#/ticket/stats">
+            <el-menu-item index="1-2">
+              Tickets stats
+            </el-menu-item>
+          </a>
+        </el-menu>
+      </el-aside>
+
+      <el-main>
+        <router-view v-if="$store.state.user.token"/>
+      </el-main>
+
+    </el-container>
   </div>
 </template>
 
@@ -87,7 +119,6 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
   }
 </style>

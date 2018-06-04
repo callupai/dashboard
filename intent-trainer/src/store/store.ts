@@ -40,6 +40,7 @@ export interface UserAccount {
 export interface Pagination {
   number: number,
   size: number
+  lastPage: number,
 }
 
 let token: any = window.localStorage.getItem("token");
@@ -53,8 +54,9 @@ daptinClient.worldManager.loadModels().then(function () {
       page: state.ticketPagination,
       sort:"-created_at"
     }).then(function (res: any) {
-      console.log("all tickets", res.data);
+      console.log("all tickets", res.data, arguments);
       state.tickets = res.data;
+      state.ticketPagination.lastPage = res.links.last_page
     });
 
     daptinClient.jsonApi.findAll("intent", {

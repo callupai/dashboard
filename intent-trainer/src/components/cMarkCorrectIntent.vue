@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <div style="text-align: center; padding-top: 30px;">
       What is the correct intent?
       <br/>
