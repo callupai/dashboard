@@ -71,6 +71,16 @@ daptinClient.worldManager.loadModels().then(function () {
   }
 });
 
+interface ColumnQuery {
+  column: string,
+  operator: string,
+  value: string
+}
+
+interface Query {
+  query: string
+}
+
 interface State {
   links: T.Link[],
   tickets: Ticket[],
@@ -79,6 +89,9 @@ interface State {
   user: UserAccount,
   ticketPagination: Pagination,
   ticketStats: any,
+  query: ColumnQuery[],
+  dates: string[]
+  statsByDates: any
 }
 
 const mutations: MutationTree<State> = {
@@ -88,13 +101,48 @@ const mutations: MutationTree<State> = {
   },
   refreshStats: (state) => {
     if (state.user.token) {
-      daptinClient.statsManager.getStats("ticket", {
-        group: "date(created_at)",
-        column: "count(*)"
-      }).then(function (res: any) {
-        console.log("Stats resolved", res);
-        state.ticketStats = res.data;
-      })
+
+
+      daptinClient.statsManager.getStats("intent", {
+        group: "id,intent_name"
+      }).then(function(res: any){
+        console.log("intent array", res.data);
+        const intentMap = {};
+        res.data.map(function(intent){
+          intentMap[intent.id] = intent.intent_name
+        });
+        console.log("intent map", intentMap);
+
+        const dates : string[] = [];
+        const tablesByDate = {};
+
+        daptinClient.statsManager.getStats("ticket", {
+          group: "date(created_at),subject,predicted_intent,corrected_intent",
+          column: "count(*)"
+        }).then(function (res: any) {
+          console.log("Stats resolved", res);
+          state.ticketStats = res.data;
+          state.ticketStats.map(function(stat) {
+            const date = stat["date(created_at)"];
+            if (dates.indexOf(date) == -1) {
+              dates.push(date);
+              tablesByDate[date] = {date: date, data: []}
+            }
+            stat.predicted_intent = intentMap[stat.predicted_intent];
+            stat.corrected_intent = intentMap[stat.corrected_intent];
+            tablesByDate[date].data.push(stat)
+          });
+          dates.sort();
+          dates.reverse();
+          console.log("dates", dates);
+          state.statsByDates = tablesByDate;
+          state.dates = dates;
+        });
+
+
+      });
+
+
     }
   },
   refreshTickets: (state) => {
@@ -103,13 +151,17 @@ const mutations: MutationTree<State> = {
       daptinClient.jsonApi.findAll("ticket", {
         included_relations: "intent",
         page: state.ticketPagination,
-        sort: "-created_at"
+        sort: "-created_at",
+        query: JSON.stringify(state.query)
       }).then(function (res: any) {
         console.log("all tickets", res.data);
         state.tickets = res.data;
       });
 
     }
+  },
+  setQuery: (state, query: ColumnQuery[]) => {
+    state.query = query;
   },
   refreshIntents: (state) => {
     if (state.user.token) {
@@ -125,7 +177,7 @@ const mutations: MutationTree<State> = {
     }
   },
   setPage: (state, page) => {
-    console.log("new pagge", page);
+    console.log("set page", page);
     state.ticketPagination = page;
   }
 };
@@ -133,9 +185,7 @@ const mutations: MutationTree<State> = {
 const actions: ActionTree<State, any> = {};
 
 const state: State = {
-  links: [
-    {url: "https://vuejs.org", description: "Core Docs"},
-  ] as T.Link[],
+  links: [] as T.Link[],
   tickets: [] as Ticket[],
   intents: [] as Intent[],
   client: daptinClient,
@@ -147,6 +197,9 @@ const state: State = {
     number: 1
   } as Pagination,
   ticketStats: [],
+  query: [] as ColumnQuery[],
+  statsByDates: {},
+  dates: []
 };
 
 export default new Vuex.Store<State>({

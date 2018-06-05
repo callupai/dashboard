@@ -1,18 +1,46 @@
 <template>
   <div>
+
     <h1>Stats</h1>
-    <el-table :data="this.$store.state.ticketStats">
-      <el-table-column
-        prop="date(created_at)"
-        label="Date"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        prop="count(*)"
-        label="Count"
-        width="180">
-      </el-table-column>
-    </el-table>
+
+    <el-main v-for="date in this.$store.state.statsByDates">
+      <el-row>
+        <el-col :span="24">
+          <h4>{{date.date}}</h4>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :span="24">
+          <el-table :data="date.data">
+            <el-table-column
+              prop="subject"
+              label="Subject"
+              sortable
+              width="500">
+            </el-table-column>
+            <el-table-column
+              prop="predicted_intent"
+              label="Predicted Intent"
+              sortable
+              width="300">
+            </el-table-column>
+            <el-table-column
+              prop="corrected_intent"
+              label="Corrected Intent"
+              sortable
+              width="300">
+            </el-table-column>
+            <el-table-column
+              prop="count(*)"
+              label="Count"
+              sortable
+              width="180">
+            </el-table-column>
+          </el-table>
+        </el-col>
+      </el-row>
+    </el-main>
+
   </div>
 </template>
 
@@ -24,18 +52,9 @@
     name: "LinkComponent",
   })
   export default class cTicketStats extends Vue {
-    aggregate1: any;
-
     mounted() {
       const that = this;
-      that.$store.commit("refreshStats")
-      // axios({
-      //   url: 'http://dashboard.callup.ai:8080/stats/ticket?column=count(*)&group=subject'
-      // }).then(function(res){
-      //   console.log("stats", res.data.data);
-      //   that.aggregate1 = res.data.data;
-      // })
-
+      that.$store.commit("refreshStats");
     }
   }
 </script>

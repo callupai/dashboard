@@ -4,7 +4,16 @@
     <el-header>
       <el-row>
         <el-col :span="12">
-          <el-input style="width: 400px" placeholder="Search by description/subject/ticket number"></el-input>
+          <el-select v-model="filterColumn" placeholder="Column filter">
+            <el-option
+              v-for="item in filterColumnOptions"
+              :key="item.value"
+              :label="item.name"
+              :value="item.value"></el-option>
+          </el-select>
+
+          <el-input @change="searchResults" v-model="query" style="width: 300px" placeholder="Search by description/subject/ticket number"></el-input>
+          <el-button @click="searchResults">Search</el-button>
         </el-col>
         <el-col :span="12">
           <el-button @click="previousPage">Previous</el-button>
@@ -30,17 +39,20 @@
             <el-table-column
               prop="subject"
               label="Subject"
+              sortable
               width="250">
             </el-table-column>
 
 
             <el-table-column width="250"
                              prop="predicted_intent.intent_name"
+                             sortable
                              label="Predicted intent">
             </el-table-column>
 
             <el-table-column width="180"
                              prop="corrected_intent.intent_name"
+                             sortable
                              label="Corrected intent">
             </el-table-column>
 
@@ -48,8 +60,17 @@
             <el-table-column
               prop="confidence"
               label="Confidence"
+              sortable
               width="100">
             </el-table-column>
+
+
+            <el-table-column
+              prop="merchant_ticket_number"
+              label="Ticket #"
+              width="150">
+            </el-table-column>
+
 
             <el-table-column
               prop="created_at"
@@ -83,7 +104,6 @@
     </el-main>
 
 
-
   </el-container>
 
 
@@ -100,6 +120,22 @@
   })
   export default class cHello extends Vue {
     snackbar_tkt: string = "";
+    query: string = "";
+    filterColumn: string = "";
+    filterColumnOptions: any[] = [
+      {
+        name: "Description",
+        value: "description"
+      },
+      {
+        name: "Subject",
+        value: "subject"
+      },
+      {
+        name: "Ticket #",
+        value: "merchant_ticket_id"
+      },
+    ];
 
     firstPage() {
       this.$store.commit("setPage", {
@@ -111,6 +147,21 @@
 
     refreshPage() {
       this.$store.commit("refreshTickets");
+    }
+
+    searchResults() {
+      console.log("search query", this.query);
+      if (this.query && this.query.length > 0) {
+        this.$store.commit("setQuery", [{
+            column: this.filterColumn,
+            operator: "contains",
+            value: this.query
+          }]
+        );
+      } else {
+        this.$store.commit("setQuery", []);
+      }
+      this.$store.commit("refreshTickets")
     }
 
     filterPredictedHandler() {
