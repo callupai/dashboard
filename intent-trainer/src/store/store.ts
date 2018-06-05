@@ -45,14 +45,14 @@ export interface Pagination {
 
 let token: any = window.localStorage.getItem("token");
 
-const daptinClient = new DaptinClient("http://intent-trainer.callup.ai:8080", false);
+const daptinClient = new DaptinClient("http://dashboard.callup.ai:8080", false);
 daptinClient.worldManager.loadModels().then(function () {
 
   if (token) {
     daptinClient.jsonApi.findAll("ticket", {
       included_relations: "intent",
       page: state.ticketPagination,
-      sort:"-created_at"
+      sort: "-created_at"
     }).then(function (res: any) {
       console.log("all tickets", res.data, arguments);
       state.tickets = res.data;
@@ -78,6 +78,7 @@ interface State {
   client: DaptinClient,
   user: UserAccount,
   ticketPagination: Pagination,
+  ticketStats: any,
 }
 
 const mutations: MutationTree<State> = {
@@ -85,13 +86,24 @@ const mutations: MutationTree<State> = {
   logout: (state) => {
     state.user = {} as UserAccount;
   },
+  refreshStats: (state) => {
+    if (state.user.token) {
+      daptinClient.statsManager.getStats("ticket", {
+        group: "date(created_at)",
+        column: "count(*)"
+      }).then(function (res: any) {
+        console.log("Stats resolved", res);
+        state.ticketStats = res.data;
+      })
+    }
+  },
   refreshTickets: (state) => {
     if (state.user.token) {
 
       daptinClient.jsonApi.findAll("ticket", {
         included_relations: "intent",
         page: state.ticketPagination,
-        sort:"-created_at"
+        sort: "-created_at"
       }).then(function (res: any) {
         console.log("all tickets", res.data);
         state.tickets = res.data;
@@ -101,18 +113,19 @@ const mutations: MutationTree<State> = {
   },
   refreshIntents: (state) => {
     if (state.user.token) {
-      daptinClient.jsonApi.findAll("intent",{
+      daptinClient.jsonApi.findAll("intent", {
         page: {
           size: 500,
-          number: 1}
-        }).then(function (res: any) {
+          number: 1
+        }
+      }).then(function (res: any) {
         console.log("all intents", res.data);
         state.intents = res.data;
       });
     }
   },
   setPage: (state, page) => {
-    console.log("new pagge", page)
+    console.log("new pagge", page);
     state.ticketPagination = page;
   }
 };
@@ -132,7 +145,8 @@ const state: State = {
   ticketPagination: {
     size: 20,
     number: 1
-  } as Pagination
+  } as Pagination,
+  ticketStats: [],
 };
 
 export default new Vuex.Store<State>({

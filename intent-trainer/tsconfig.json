@@ -4,6 +4,7 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "strict": true,
+    "noImplicitAny": false,
     "baseUrl": ".",
     "paths":{
       "@router/*": ["./src/router/*"],
