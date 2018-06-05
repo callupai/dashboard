@@ -211,7 +211,7 @@
 
     formatDateAsIst(row: any, column: any, createdAt: string, index: any) {
       let indianDate = new Date(new Date(createdAt).getTime() + 330 * 60000);
-      let finalTimeString = indianDate.toDateString() + "\n" + indianDate.toTimeString().split(" ")[0];
+      let finalTimeString = indianDate.toDateString().split("2018")[0] + indianDate.toTimeString().split(" ")[0];
 
       return finalTimeString;
     }
