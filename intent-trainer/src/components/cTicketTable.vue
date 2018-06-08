@@ -133,7 +133,7 @@
       },
       {
         name: "Ticket #",
-        value: "merchant_ticket_id"
+        value: "merchant_ticket_number"
       },
     ];
 
@@ -155,7 +155,7 @@
         this.$store.commit("setQuery", [{
             column: this.filterColumn,
             operator: "contains",
-            value: this.query
+            value: this.query + "%"
           }]
         );
       } else {
